@@ -1,4 +1,9 @@
-import printMe from './print.js';
+
+import './styles.css';
+import { file, parse } from './globals.js';
+
+
+// import printMe from './print.js';
 
 
 
@@ -9,7 +14,17 @@ function component() {
 
 	element.innerHTML = 'hellowebpack';
 	btn.innerHTML = 'Click me and check the console!';
-	btn.onclick = printMe;
+	// btn.onclick = printMe;
+
+
+	// Note that because a network request is involved, some indication
+// of loading would need to be shown in a production-level site/app.
+	btn.onclick = e => import(/* webpackChunkName: "print" */ './print').then(module => {
+		var print = module.default;
+		print();
+	});
+
+
 	element.appendChild(btn);
 	return element;
 }
@@ -21,7 +36,7 @@ if(module.hot){
 		document.body.removeChild(element);
 		element = component();
 		document.body.appendChild(element);
-		printMe();
+		// printMe();
 		// 按钮的 onclick 事件仍然绑定在旧的 printMe 函数上。为了让它与 HRM 正常工作，我们需要使用 module.hot.accept 更新绑定到新的 printMe 函数上：
 	})
 }

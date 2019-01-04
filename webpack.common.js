@@ -1,21 +1,43 @@
-const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
 	entry: {
-		app: './src/index.js'
+		index: './src/index.js',
+		"another-module": './src/another-module.js'
 	},
 	plugins: [
 		new HtmlWebpackPlugin({
 			title: 'haha'
-		})
+		}),
+		new webpack.HashedModuleIdsPlugin(),
+		new webpack.ProvidePlugin({
+			// _: 'lodash',
+			join: ['lodash', 'join']
+
+		}),
 	],
-	output: {
-		filename: '[name].bundle.js',
-		path: path.resolve(__dirname, 'dist')
+	optimization: {
+		splitChunks: {
+			chunks: 'all',
+			cacheGroups: {
+				vendor: {
+					test: /[\\/]node_modules[\\/]/,
+					name: 'vendors',
+					chunks: 'all'
+				}
+			}
+		},
+		runtimeChunk: 'single'
 	},
 	module: {
 		rules: [
+
+			{
+				test: require.resolve('./src/globals.js'),
+				use: 'exports-loader?file,parse=helpers.parse'
+			},
+
 			//JSON 支持实际是内置的
 			{
 				test:/\.css$/,

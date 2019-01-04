@@ -1,3 +1,5 @@
+const path = require('path');
+
 const merge = require('webpack-merge');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const common = require('./webpack.common.js');
@@ -5,8 +7,13 @@ const webpack = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = merge(common, {
+	output: {
+		filename: '[name].[chunkhash].js',
+		chunkFilename: '[name].[chunkhash].js',//它决定非入口 chunk 的名称(此项会对缓存配置有影响，先注释掉)
+		path: path.resolve(__dirname,   'dist')
+	},
 	mode: 'production',
-	devtool: 'source-map',
+	// devtool: 'source-map',
 	plugins:[
 		new CleanWebpackPlugin(['dist']),//在每次构建前清理 /dist 文件夹
 		new UglifyJSPlugin({
